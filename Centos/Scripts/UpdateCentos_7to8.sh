@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## UpdateCentos_7to8.sh
-##wget https://raw.githubusercontent.com/numbnet/OSys/master/Centos/Scripts/UpdateCentos_7to8.sh
+## wget https://raw.githubusercontent.com/numbnet/OSys/master/Centos/Scripts/UpdateCentos_7to8.sh; chmod +x ~/UpdateCentos_7to8.sh;~/UpdateCentos_7to8.sh 
 
 ##  Update Centos7 to Centos8  ##
 yum -y update $$ yum -y upgrade
