@@ -1,83 +1,104 @@
 #!/bin/bash
 
 ## UpdateCentos_7to8.sh
-## wget https://raw.githubusercontent.com/numbnet/OSys/master/Centos/Scripts/UpdateCentos_7to8.sh; chmod +x ~/UpdateCentos_7to8.sh;~/UpdateCentos_7to8.sh 
+##       wget https://raw.githubusercontent.com/numbnet/OSys/master/Centos/Scripts/UpdateCentos_7to8.sh && chmod +x ~/UpdateCentos_7to8.sh && ~/UpdateCentos_7to8.sh
 
-##  Update Centos7 to Centos8  ##
-yum -y update $$ yum -y upgrade
+wait() { 
+echo "Нажмите любую клавишу, чтобы продолжить..."
+read -s -n 1
+}
+
+
 #################################
-## Подготовка
+echo "## Подготовка"
 
-# Добавляем репозиторий EPEL
+echo "# Добавляем репозиторий EPEL"
+wait
 yum -y install epel-release
 
-# Устанавливаем утилиту yum-utils
+echo "# Устанавливаем утилиту yum-utils и rpmconf"
+wait
 yum -y install yum-utils
-
-# Устанавливаем утилиту rpmconf
 yum -y install rpmconf
 
-# Выполняем проверку и сравнение конфигов
+echo "# Выполняем проверку и сравнение конфигов"
 rpmconf -a
+wait
 
-# После выполнения команды смотрим вывод утилиты и отвечаем на вопросы о том, 
-#какой конфиг нам нужен (текущий, дефолтный из пакета …)
+# После выполнения команды смотрим вывод утилиты и отвечаем на вопросы о том,
+# какой конфиг нам нужен (текущий, дефолтный из пакета …)
 
-# Смотрим, какие у нас установлены пакеты не из репозиториев, есть ли в системе пакеты, которые можно удалить
+echo "# определим уст. пакеты не из репо"
 package-cleanup --leaves
 package-cleanup --orphans
+wait
 
 #################################
-## Обновление Centos до версии 8
-
-# Установим менеджер пакетов dnf, который используется по умолчанию в CentOS 8
+echo "## Start update centos8"
+echo "Установим менеджер пакетов dnf"
 yum -y install dnf
 
-# Удалим менеджер пакетов yum (если он в дальнейшем вам не нужен)
-dnf -y remove yum yum-metadata-parser
-rm -Rf /etc/yum
+echo "# НЕ Удалим менеджер пакетов yum"
+#wait
+#dnf -y remove yum yum-metadata-parser
+#rm -Rf /etc/yum
 
-# Обновляем Centos
+echo "# Обновляем Centos"
+wait
 dnf -y upgrade
 
-# Устанавливаем необходимые пакеты для CentOS 8
+echo "# Устан. пакеты для CentOS 8"
+wait
 dnf -y install \
-  http://vault.centos.org/8.2.2004/BaseOS/x86_64/os/Packages/centos-repos-8.2-2.2004.0.1.el8.x86_64.rpm \
-  http://vault.centos.org/8.2.2004/BaseOS/x86_64/os/Packages/centos-release-8.2-2.2004.0.1.el8.x86_64.rpm \
-  http://vault.centos.org/8.2.2004/BaseOS/x86_64/os/Packages/centos-gpg-keys-8.2-2.2004.0.1.el8.noarch.rpm
+http://vault.centos.org/8.2.2004/BaseOS/x86_64/os/Packages/centos-repos-8.2-2.2004.0.1.el8.x86_64.rpm \
+http://vault.centos.org/8.2.2004/BaseOS/x86_64/os/Packages/centos-release-8.2-2.2004.0.1.el8.x86_64.rpm \
+http://vault.centos.org/8.2.2004/BaseOS/x86_64/os/Packages/centos-gpg-keys-8.2-2.2004.0.1.el8.noarch.rpm
 
-# Обновляем репозиторий EPEL
+
+echo "# Обновляем репозиторий EPEL"
+wait
 dnf -y upgrade https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
 
 # Удаляем временные файлы
 dnf clean all
 
-# Удаляем старые ядра от Centos 7
+echo "# Удаляем старые ядра от Centos 7"
+wait
 rpm -e `rpm -q kernel`
 
-# Удаляем пакеты, которые могут конфликтовать
+echo "# Удаляем пакеты, которые могут конфликтовать"
+wait
 rpm -e --nodeps sysvinit-tools
 dnf -y remove python36-rpmconf
+#dnf remove -y iptables
+#dnf remove -y ebtables
 
-
-# Запускаем обновление системы
+echo "# Запускаем обновление системы"
+wait
 dnf -y --releasever=8 --allowerasing --setopt=deltarpm=false distro-sync
 
 
 #################################
-## Ядро для Centos 8
-#Устанавливаем новое ядро для CentOS 8
-dnf -y install kernel-core
+echo "## Ядро для Centos 8"
+echo "# Устанавливаем новое ядро для CentOS 8"
+wait
+dnf -y install kernel-core --allowerasing
+# dnf -y install kernel-core
 
-#Устанавливаем минимальный набор пакетов через групповое управление
-dnf -y groupupdate "Core" "Minimal Install"
+echo "#Устанавливаем минимальный набор пакетов через групповое управление"
+wait
+dnf -y groupupdate "Core" "Minimal Install" --allowerasing
 
-#Проверяем, какая версия centos установилась
+echo "#Проверяем, какая версия centos установилась"
 cat /etc/*release
+wait
 
-#Удаляем временные файлы
+echo "#Удаляем временные файлы"
+wait
 dnf clean all
 dnf -y install yum
 
-exit
+echo "The End";
 
+wait
+exit
