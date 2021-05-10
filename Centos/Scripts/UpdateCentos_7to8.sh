@@ -39,9 +39,9 @@ echo "Установим менеджер пакетов dnf"
 yum -y install dnf
 
 echo "# НЕ Удалим менеджер пакетов yum"
-#wait
-#dnf -y remove yum yum-metadata-parser
-#rm -Rf /etc/yum
+wait
+dnf -y remove yum yum-metadata-parser
+rm -Rf /etc/yum
 
 echo "# Обновляем Centos"
 wait
@@ -70,8 +70,8 @@ echo "# Удаляем пакеты, которые могут конфликт�
 wait
 rpm -e --nodeps sysvinit-tools
 dnf -y remove python36-rpmconf
-#dnf remove -y iptables
-#dnf remove -y ebtables
+dnf remove -y iptables
+dnf remove -y ebtables
 
 echo "# Запускаем обновление системы"
 wait
@@ -83,7 +83,6 @@ echo "## Ядро для Centos 8"
 echo "# Устанавливаем новое ядро для CentOS 8"
 wait
 dnf -y install kernel-core --allowerasing
-# dnf -y install kernel-core
 
 echo "#Устанавливаем минимальный набор пакетов через групповое управление"
 wait
@@ -96,7 +95,12 @@ wait
 echo "#Удаляем временные файлы"
 wait
 dnf clean all
-dnf -y install yum
+
+cd /usr/bin
+sudo ln -s dnf-3 yum
+cd /etc/yum
+sudo rm -r *
+sudo dnf -y install yum
 
 echo "The End";
 
