@@ -1,1 +1,9 @@
-h
+* * * * * * * * * * * * * * * 1 drives * * * * * * * * * * * * *
+* *
+# 1 Disk partitioning information,datapool in sda
+clearpart --all --initlabel
+part swap --fstype="swap" --size=8192  --ondisk=sda
+part /boot --fstype=ext4 --size=1024 --ondisk=sda
+part /biosboot --fstype=biosboot --size=2 --ondisk=sda
+part / --fstype="ext4" --size=50000 --ondisk=sda
+part /home --fstype=ext4 --size=75500 --grow --ondisk=sda
